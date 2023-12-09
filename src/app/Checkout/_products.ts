@@ -27,13 +27,13 @@ export const productList: Product[] = [
   },
 ]
 
-export interface ProductCard extends Product {
+export interface ProductCardT extends Product {
   cardPromotionText?: string
 }
 export interface CartProduct extends Product {
   id: string
 }
-export function getProductCardList (checkoutList: Product[]): ProductCard[] {
+export function getProductCardList (checkoutList: Product[]): ProductCardT[] {
   return checkoutList.map(product => {
     const promotion = promotionMap[product.sku]
     if (promotion) {
