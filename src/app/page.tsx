@@ -1,7 +1,7 @@
 
 'use client'
 import { useEffect, useState } from "react"
-import { ProductCardT, CheckoutProduct, SkuId, getProductCardList, productList, CartProduct, getCheckoutList } from "./Checkout/_products"
+import { ProductCardT, CheckoutProduct, SkuId, getProductCardList, productList, CartProduct, getCheckoutList } from "./_products"
 import ProductCard from "./components/ProductCard"
 
 export default function Home() {

@@ -96,3 +96,7 @@ export function getCheckoutList (cardList: CartProduct[]): CheckoutProduct[] {
   })
   return checkoutList
 }
+
+export function sum(a: number, b: number) {
+  return a + b
+}
