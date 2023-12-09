@@ -22,7 +22,7 @@ export const productList: Product[] = [
   },
   {
     sku: 'vga',
-    name: 'VGA adappter',
+    name: 'VGA adapter',
     price: 30.00,
   },
 ]
@@ -32,6 +32,7 @@ export interface ProductCardT extends Product {
 }
 export interface CartProduct extends Product {
   id: string
+  finalPrice: number | undefined
 }
 export function getProductCardList (checkoutList: Product[]): ProductCardT[] {
   return checkoutList.map(product => {
@@ -47,7 +48,6 @@ export function getProductCardList (checkoutList: Product[]): ProductCardT[] {
 }
 export interface CheckoutProduct extends CartProduct {
   promotionDescription?: string
-  bundle?: CheckoutProduct
 }
 
 type Promotion = {
@@ -64,7 +64,7 @@ const promotionMap: PromotionMap = {
     cardDescription: 'Purchase 3 Apple TVs, get 1 free!',
     checkoutDescription: 'With the purchase of 3 Apple TVs, get 1 free!',
     checkQualification (cartList: CheckoutProduct[]): boolean {
-      return cartList.filter(product => product.sku === 'atv').length >= 3
+      return cartList.filter(product => product.sku === 'atv').length > 2
     },
     addPromotion (cartList: CheckoutProduct[]): CheckoutProduct[] {
       if (this.checkQualification(cartList)) {
@@ -76,12 +76,69 @@ const promotionMap: PromotionMap = {
           if (product.sku === 'atv' && atvCounter === 3) {
             return {
               ...product,
-              price: 0,
+              finalPrice: 0,
               promotionDescription: this.checkoutDescription
             }
           }
           return product
         })
+      }
+      return cartList
+    }
+  },
+  'ipd': {
+    cardDescription: '$499.99 each when 5 or more purchased!',
+    checkoutDescription: 'All iPads are $499.99 each when 5 or more are purchased',
+    checkQualification (cartList: CheckoutProduct[]): boolean {
+      return cartList.filter(product => product.sku === 'ipd').length > 4
+    },
+    addPromotion (cartList: CheckoutProduct[]): CheckoutProduct[] {
+      if (this.checkQualification(cartList)) {
+        return cartList.map(product => {
+          if (product.sku === 'ipd') {
+            return {
+              ...product,
+              finalPrice: 499.99
+            }
+          }
+          return product
+        })
+      }
+      return cartList
+    }
+  },
+  'mbp': {
+    cardDescription: 'Get a free VGA with each purchase!',
+    checkoutDescription: 'Each purchased MacBook Pro includes a free VGA adapter',
+    checkQualification (cartList: CheckoutProduct[]): boolean {
+      return cartList.filter(product => product.sku === 'mbp').length > 0
+    },
+    addPromotion (cartList: CheckoutProduct[]): CheckoutProduct[] {
+      if (this.checkQualification(cartList)) {
+        const mbpNumber = cartList.filter(product => product.sku === 'mbp').length
+        let freeVgaCount = 0
+        const promotionList = cartList.map(product => {
+          if (product.sku === 'vga' && freeVgaCount < mbpNumber) {
+            freeVgaCount++
+            return {
+              ...product,
+              finalPrice: 0
+            }
+          }
+          return product
+        })
+        if (freeVgaCount < mbpNumber) {
+          const vgaProduct = productList.find(product => product.sku === 'vga') as Product
+          let addVgaCount = mbpNumber - freeVgaCount
+          for (let count = 1; count <= addVgaCount; count++) {
+            promotionList.push({
+              ...vgaProduct,
+              id: String(Date.now()),
+              finalPrice: 0
+            })
+          }
+        }
+        return promotionList
       }
       return cartList
     }
@@ -95,8 +152,4 @@ export function getCheckoutList (cardList: CartProduct[]): CheckoutProduct[] {
     checkoutList = promotion.addPromotion(checkoutList)
   })
   return checkoutList
-}
-
-export function sum(a: number, b: number) {
-  return a + b
 }

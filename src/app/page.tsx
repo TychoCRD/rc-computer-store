@@ -11,7 +11,8 @@ export default function Home() {
   function addProductToCart (product: ProductCardT): void {
     const payload = {
       ...product,
-      id: String(Date.now())
+      id: String(Date.now()),
+      finalPrice: undefined
     }
     const newCartList = [...preCartList, payload]
     setPreCartList(newCartList)
