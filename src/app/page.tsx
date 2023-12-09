@@ -1,112 +1,95 @@
-import Image from 'next/image'
+
+'use client'
+import { useEffect, useState } from "react"
+import { ProductCard, CheckoutProduct, SkuId, getProductCardList, productList, CartProduct, getCheckoutList } from "./Checkout/_products"
+import { MinusSmallIcon, PlusSmallIcon } from "@heroicons/react/20/solid"
 
 export default function Home() {
+  const cardList = getProductCardList(productList)
+  const [preCartList, setPreCartList] = useState<CartProduct[]>([])
+  const [finalCheckoutList, setFinalCheckoutList] = useState<CheckoutProduct[]>([])
+  function addProductToCart (product: ProductCard): void {
+    const payload = {
+      ...product,
+      id: String(Date.now())
+    }
+    const newCartList = [...preCartList, payload]
+    setPreCartList(newCartList)
+  }
+  function removeProductFromCart (sku: SkuId): void {
+    const newCartList: CartProduct[] = []
+    let removeCounter = 0
+    preCartList.forEach(product => {
+      if (product.sku === sku && removeCounter === 0) {
+        removeCounter++
+        return
+      } else {
+        newCartList.push(product)
+      }
+    })
+    setPreCartList(newCartList)
+  }
+  function getCartQuantity (sku: SkuId): number {
+    return preCartList.filter(product => product.sku === sku).length
+  }
+  useEffect(() => {
+    console.log('process checkout')
+    // Process Final Checkout with Promotions
+    const checkoutList = getCheckoutList(preCartList)
+    setFinalCheckoutList(checkoutList)
+  }, [preCartList])
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+      <div className="z-10 max-w-5xl w-full items-center justify-between font-sans text-sm lg:flex">
+        {cardList.map(card => (
+          <div
+          key={card.sku}
+          className="group flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white w-[400px] h-[250px] mr-4 mb-4"
+        >
+          <div className="bg-gray-200">
+            {/* <img
+              src={card.imageSrc}
+              alt={card.imageAlt}
+              className="h-full w-full object-cover object-center sm:h-full sm:w-full"
+            /> */}
+          </div>
+          <div className="flex flex-1 flex-col space-y-2 p-4">
+            <h3 className="text-sm font-medium text-gray-900">
+              <span className="text-2xl">
+                {card.name}
+              </span>
+            </h3>
+            <p className="text-base font-medium text-gray-900">${card.price}</p>
+            <div className="h-[30%]">
+              {card.cardPromotionText && (
+                <p className="text-xs text-orange-600">PROMOTION: {card.cardPromotionText}</p>
+              )}
+            </div>
+            {getCartQuantity(card.sku) > 0 && (
+              <div className="flex">
+                <div className="border rounded-lg text-gray-800 border-solid w-[24px] cursor-pointer"
+                  onClick={() => removeProductFromCart(card.sku)}><MinusSmallIcon/></div>
+                <span className="mx-2">{getCartQuantity(card.sku)}</span>
+                <div className="border rounded-lg text-gray-800 border-solid w-[24px] cursor-pointer"
+                  onClick={() => addProductToCart(card)}><PlusSmallIcon/></div>
+              </div>
+            )}
+            {getCartQuantity(card.sku) === 0 && (
+              <button
+                type="button"
+                className="inline-flex w-auto justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2 mb-4 disabled:opacity-25 cursor-pointer"
+              onClick={() => addProductToCart(card)}>
+                Add to cart
+              </button>
+            )}
+          </div>
         </div>
+        ))}
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+      <div>
+        {finalCheckoutList.map(product => (
+          <div key={product.id}>{`${product.id}: ${product.sku}, ${product.price}`}</div>
+        ))}
       </div>
     </main>
   )
