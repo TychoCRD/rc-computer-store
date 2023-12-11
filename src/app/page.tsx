@@ -5,9 +5,11 @@ import { ProductCardT, CheckoutProduct, SkuId, getProductCardList, productList, 
 import ProductCard from "./components/ProductCard"
 import CheckoutCard from "./components/CheckoutCard"
 import { ShoppingCartIcon } from "@heroicons/react/20/solid"
+import PaymentModal from "./components/PaymentModal"
 
 export default function Home() {
   const cardList = getProductCardList(productList)
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [preCartList, setPreCartList] = useState<CartProduct[]>([])
   const [finalCheckoutList, setFinalCheckoutList] = useState<CheckoutProduct[]>([])
   const uniqueCheckoutSku = finalCheckoutList.reduce((acc: SkuId[], cur) => {
@@ -41,6 +43,10 @@ export default function Home() {
   }
   function getCartQuantity (sku: SkuId): number {
     return preCartList.filter(product => product.sku === sku).length
+  }
+  function finishPayment (): void {
+    setPreCartList([])
+    setShowPaymentModal(false)
   }
   useEffect(() => {
     // Process Final Checkout with Promotions
@@ -82,13 +88,16 @@ export default function Home() {
               <button
                 type="button"
                 className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-2xl font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 sm:col-start-2 mb-4 disabled:opacity-25 cursor-pointer"
-                onClick={() => alert('Thanks!')}>
+                onClick={() => setShowPaymentModal(true)}>
                 Pay now
               </button>
             </div>
           </section>
         )}
       </div>
+      <PaymentModal
+        show={showPaymentModal}
+        closeHandler={() => finishPayment()}/>
     </main>
   )
 }
