@@ -1,6 +1,6 @@
 
 'use client'
-import { useEffect, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 import { ProductCardT, CheckoutProduct, SkuId, getProductCardList, productList, CartProduct, getCheckoutList, getCheckoutTotal } from "./_products"
 import ProductCard from "./components/ProductCard"
 import CheckoutCard from "./components/CheckoutCard"
@@ -55,34 +55,37 @@ export default function Home() {
   }, [preCartList])
   return (
     <main className="flex min-h-screen justify-between pl-10">
-      <div className="flex-1 font-sans text-sm flex flex-wrap overflow py-10 items-center justify-center content-center">
-        {cardList.map(card => (
-          <ProductCard
-            key={card.sku}
-            cardData={card}
-            cartQuantity={getCartQuantity(card.sku)}
-            addProductToCart={addProductToCart}
-            removeProductFromCart={removeProductFromCart}
-          />
-        ))}
-      </div>
-      <div className="flex flex-col shrink-0 justify-start items-center w-[30%] border-l border-gray-200 py-4">
-        <section className="text-4xl flex justify-center mb-4 border-b border-gray-200 w-full py-2 font-semibold text-green-600">CHECKOUT <ShoppingCartIcon className="ml-2 w-[36px]"/></section>
+      <section className="flex flex-col items-center flex-1">
+        <h2 className="text-5xl text-indigo-600 italic mx-auto my-[60px]">RC Computer Store</h2>
+        <div className="text-sm flex flex-wrap justify-around content-center w-[700px] mx-auto">
+          {cardList.map(card => (
+            <ProductCard
+              key={card.sku}
+              cardData={card}
+              cartQuantity={getCartQuantity(card.sku)}
+              addProductToCart={addProductToCart}
+              removeProductFromCart={removeProductFromCart}
+            />
+          ))}
+        </div>
+      </section>
+      <div className="flex flex-col shrink-0 justify-start items-center w-[30%] border-l border-gray-200">
+        <section className="text-4xl flex justify-center mb-4 border-b border-gray-200 w-full py-6 font-semibold text-green-600">CHECKOUT <ShoppingCartIcon className="ml-2 w-[36px]"/></section>
         {uniqueCheckoutSku.map(sku => (
-          <>
+          <Fragment key={sku}>
             <CheckoutCard
               key={sku}
               checkoutProductList={finalCheckoutList.filter(product => product.sku === sku)}
               addProductToCart={addProductToCart}
               removeProductFromCart={removeProductFromCart}
               clearProductFromCart={clearProductFromCart}/>
-          </>
+          </Fragment>
         ))}
         {uniqueCheckoutSku.length > 0 && (
           <section className="flex flex-col mt-4 w-full">
             <div className="flex justify-between p-4">
               <span className="text-4xl">Total:</span>
-              <span className="text-4xl">${getCheckoutTotal(finalCheckoutList)}</span>
+              <span className="text-4xl">${getCheckoutTotal(finalCheckoutList).toFixed(2)}</span>
             </div>
             <div className="flex self-end p-4 w-full">
               <button

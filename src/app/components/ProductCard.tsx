@@ -20,7 +20,7 @@ export default function ProductCard({ ...props }: ProductCardProps) {
            {props.cardData.name}
           </span>
         </h3>
-        <p className="text-base font-medium text-gray-900">${props.cardData.price}</p>
+        <p className="text-base font-medium text-gray-900">${props.cardData.price.toFixed(2)}</p>
         <div className="h-[30%]">
          {props.cardData.cardPromotionText && (
             <p className="text-xs text-orange-600">PROMOTION: {props.cardData.cardPromotionText}</p>

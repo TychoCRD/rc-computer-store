@@ -22,7 +22,7 @@ export const productList: Product[] = [
   },
   {
     sku: 'vga',
-    name: 'VGA adapter',
+    name: 'VGA Adapter',
     price: 30.00,
   },
 ]
