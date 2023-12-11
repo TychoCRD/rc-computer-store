@@ -1,5 +1,6 @@
 import { ProductCardT, SkuId } from "@/app/_products"
-import { MinusSmallIcon, PlusSmallIcon, ShoppingCartIcon } from "@heroicons/react/20/solid"
+import { ShoppingCartIcon } from "@heroicons/react/20/solid"
+import CartQuantityAdjuster from "./CartQuantityAdjuster"
 
 type ProductCardProps = {
   cartQuantity: number
@@ -34,11 +35,10 @@ export default function ProductCard({ ...props }: ProductCardProps) {
         </div>
         {props.cartQuantity > 0 && (
           <div className="flex items-center">
-            <button role="remove-btn" className="border rounded-lg text-gray-800 border-solid w-[24px] cursor-pointer"
-              onClick={() => props.removeProductFromCart(props.cardData.sku)}><MinusSmallIcon/></button>
-            <span className="mx-2">{props.cartQuantity}</span>
-            <button role="add-btn" className="border rounded-lg text-gray-800 border-solid w-[24px] cursor-pointer"
-              onClick={() => props.addProductToCart(props.cardData)}><PlusSmallIcon/></button>
+            <CartQuantityAdjuster
+              cartQuantity={props.cartQuantity}
+              addProductToCart={() => props.addProductToCart(props.cardData)}
+              removeProductFromCart={() => props.removeProductFromCart(props.cardData.sku)}/>
             <div className="text-gray-400 w-[24px] ml-2"><ShoppingCartIcon/></div>
           </div>
         )}

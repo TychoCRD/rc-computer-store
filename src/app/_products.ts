@@ -98,7 +98,8 @@ const promotionMap: PromotionMap = {
           if (product.sku === 'ipd') {
             return {
               ...product,
-              finalPrice: 499.99
+              finalPrice: 499.99,
+              promotionDescription: this.checkoutDescription
             }
           }
           return product
@@ -122,7 +123,8 @@ const promotionMap: PromotionMap = {
             freeVgaCount++
             return {
               ...product,
-              finalPrice: 0
+              finalPrice: 0,
+              promotionDescription: this.checkoutDescription
             }
           }
           return product
@@ -134,7 +136,8 @@ const promotionMap: PromotionMap = {
             promotionList.push({
               ...vgaProduct,
               id: String(Date.now()),
-              finalPrice: 0
+              finalPrice: 0,
+              promotionDescription: this.checkoutDescription
             })
           }
         }
@@ -153,3 +156,17 @@ export function getCheckoutList (cardList: CartProduct[]): CheckoutProduct[] {
   })
   return checkoutList
 }
+
+export function getCheckoutTotal (checkoutList: CheckoutProduct[]) {
+  return checkoutList.reduce((acc, cur) => {
+    const addPrice = cur.finalPrice !== undefined ? cur.finalPrice : cur.price
+    return acc + addPrice
+  }, 0)
+}
+
+export function getCheckoutPrePromotionTotal (checkoutList: CheckoutProduct[]) {
+  return checkoutList.reduce((acc, cur) => {
+    return acc + cur.price
+  }, 0)
+}
+
