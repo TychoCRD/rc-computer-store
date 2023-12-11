@@ -1,6 +1,6 @@
 
 'use client'
-import { Fragment, useEffect, useState } from "react"
+import { Fragment, useState } from "react"
 import { ProductCardT, CheckoutProduct, SkuId, getProductCardList, productList, getCheckoutList, getCheckoutTotal } from "./_products"
 import ProductCard from "./components/ProductCard"
 import CheckoutCard from "./components/CheckoutCard"
@@ -50,11 +50,6 @@ export default function Home() {
     setFinalCheckoutList([])
     setShowPaymentModal(false)
   }
-  // useEffect(() => {
-  //   // Process Final Checkout with Promotions
-  //   const checkoutList = getCheckoutList(preCartList)
-  //   setFinalCheckoutList(checkoutList)
-  // }, [preCartList])
   return (
     <main className="flex min-h-screen justify-between pl-10">
       <section className="flex flex-col items-center flex-1">
