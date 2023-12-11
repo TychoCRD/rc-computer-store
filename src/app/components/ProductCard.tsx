@@ -12,7 +12,7 @@ type ProductCardProps = {
 export default function ProductCard({ ...props }: ProductCardProps) {
   return (
     <div
-      className="group flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white w-[400px] h-[250px] mr-4 mb-4"
+      className="flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white w-[300px] h-[250px] mr-8 mb-8"
     >
       <div className="flex flex-1 flex-col space-y-2 p-4">
         <h3 className="font-medium text-gray-900">

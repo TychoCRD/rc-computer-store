@@ -19,14 +19,12 @@ export default function CheckoutCard({...props}: CheckoutCardProps) {
   const productWithPromotion = checkoutProductList.find(product => product.promotionDescription)
   const promotionDescription = productWithPromotion ? productWithPromotion.promotionDescription as string : ''
   return (
-    <div className="flex flex-col border-b-1 border-solid border border-gray-200 p-4 w-[400px]">
-      <section className="flex items-center justify-between mb-2">
-        <h3 className="font-medium text-gray-900">
-          <span className="text-2xl">
-            {productName}
-          </span>
-        </h3>
-        <span className="text-2xl">${listFinalTotal}</span>
+    <div className="flex flex-col border-b-1 border-solid border-b border-gray-200 p-4 w-full">
+      <section className="flex font-medium items-center justify-between mb-2">
+        <span className="text-lg">
+          {productName}
+        </span>
+        <span className="text-lg">${listFinalTotal}</span>
       </section>
       <section className="flex items-center justify-between mb-2">
         <div className="flex items-center">
@@ -40,7 +38,7 @@ export default function CheckoutCard({...props}: CheckoutCardProps) {
             removeProductFromCart={() => props.removeProductFromCart(productSku)}/>
         </div>
         {listPrePromotionTotal !== listFinalTotal && (
-          <div data-testid="promotion-price" className="text-xl text-orange-600 line-through">${listPrePromotionTotal}</div>
+          <div data-testid="promotion-price" className="mr-2 text-xl text-orange-600 line-through">${listPrePromotionTotal}</div>
         )}
       </section>
       {promotionDescription.length > 0 && (
