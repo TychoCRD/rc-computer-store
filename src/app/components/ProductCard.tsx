@@ -14,15 +14,8 @@ export default function ProductCard({ ...props }: ProductCardProps) {
     <div
       className="group flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white w-[400px] h-[250px] mr-4 mb-4"
     >
-      <div className="bg-gray-200">
-        {/* <img
-          src={card.imageSrc}
-          alt={card.imageAlt}
-          className="h-full w-full object-cover object-center sm:h-full sm:w-full"
-        /> */}
-      </div>
       <div className="flex flex-1 flex-col space-y-2 p-4">
-        <h3 className="text-sm font-medium text-gray-900">
+        <h3 className="font-medium text-gray-900">
           <span className="text-2xl">
            {props.cardData.name}
           </span>
@@ -30,7 +23,7 @@ export default function ProductCard({ ...props }: ProductCardProps) {
         <p className="text-base font-medium text-gray-900">${props.cardData.price}</p>
         <div className="h-[30%]">
          {props.cardData.cardPromotionText && (
-            <p className="text-xs text-orange-600">PROMOTION:{props.cardData.cardPromotionText}</p>
+            <p className="text-xs text-orange-600">PROMOTION: {props.cardData.cardPromotionText}</p>
           )}
         </div>
         {props.cartQuantity > 0 && (

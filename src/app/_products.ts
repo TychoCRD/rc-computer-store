@@ -62,7 +62,7 @@ type PromotionMap = {
 const promotionMap: PromotionMap = {
   'atv': {
     cardDescription: 'Purchase 3 Apple TVs, get 1 free!',
-    checkoutDescription: 'With the purchase of 3 Apple TVs, get 1 free!',
+    checkoutDescription: 'With the purchase of 3 Apple TVs, you get 1 free!',
     checkQualification (cartList: CheckoutProduct[]): boolean {
       return cartList.filter(product => product.sku === 'atv').length > 2
     },
@@ -110,7 +110,7 @@ const promotionMap: PromotionMap = {
   },
   'mbp': {
     cardDescription: 'Get a free VGA with each purchase!',
-    checkoutDescription: 'Each purchased MacBook Pro includes a free VGA adapter',
+    checkoutDescription: 'A free VGA adapter is included with every Macbook Pro purchase',
     checkQualification (cartList: CheckoutProduct[]): boolean {
       return cartList.filter(product => product.sku === 'mbp').length > 0
     },

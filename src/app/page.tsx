@@ -3,12 +3,16 @@
 import { useEffect, useState } from "react"
 import { ProductCardT, CheckoutProduct, SkuId, getProductCardList, productList, CartProduct, getCheckoutList } from "./_products"
 import ProductCard from "./components/ProductCard"
+import CheckoutCard from "./components/CheckoutCard"
 
 export default function Home() {
   const cardList = getProductCardList(productList)
   const [preCartList, setPreCartList] = useState<CartProduct[]>([])
   const [finalCheckoutList, setFinalCheckoutList] = useState<CheckoutProduct[]>([])
-  function addProductToCart (product: ProductCardT): void {
+  const uniqueCheckoutSku = finalCheckoutList.reduce((acc: SkuId[], cur) => {
+    return acc.includes(cur.sku) ? acc : acc.concat([cur.sku])
+  }, [])
+  function addProductToCart (product: ProductCardT | CheckoutProduct): void {
     const payload = {
       ...product,
       id: String(Date.now()),
@@ -30,11 +34,14 @@ export default function Home() {
     })
     setPreCartList(newCartList)
   }
+  function clearProductFromCart (sku: SkuId): void {
+    const newCartList = preCartList.filter(product => product.sku !== sku)
+    setPreCartList(newCartList)
+  }
   function getCartQuantity (sku: SkuId): number {
     return preCartList.filter(product => product.sku === sku).length
   }
   useEffect(() => {
-    console.log('process checkout')
     // Process Final Checkout with Promotions
     const checkoutList = getCheckoutList(preCartList)
     setFinalCheckoutList(checkoutList)
@@ -53,14 +60,14 @@ export default function Home() {
         ))}
       </div>
       <div>
-        {finalCheckoutList.map(product => (
+        {uniqueCheckoutSku.map(sku => (
           <>
-            <div key={product.id}>
-              <span>{`${product.id}: ${product.sku}, ${product.price}`}</span>
-              {product.promotionDescription && (
-                <div>{product.promotionDescription}</div>
-              )}
-            </div>
+            <CheckoutCard
+              key={sku}
+              checkoutProductList={finalCheckoutList.filter(product => product.sku === sku)}
+              addProductToCart={addProductToCart}
+              removeProductFromCart={removeProductFromCart}
+              clearProductFromCart={clearProductFromCart}/>
           </>
         ))}
       </div>
