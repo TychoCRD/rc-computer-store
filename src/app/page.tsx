@@ -1,7 +1,7 @@
 
 'use client'
 import { Fragment, useEffect, useState } from "react"
-import { ProductCardT, CheckoutProduct, SkuId, getProductCardList, productList, CartProduct, getCheckoutList, getCheckoutTotal } from "./_products"
+import { ProductCardT, CheckoutProduct, SkuId, getProductCardList, productList, getCheckoutList, getCheckoutTotal } from "./_products"
 import ProductCard from "./components/ProductCard"
 import CheckoutCard from "./components/CheckoutCard"
 import { ShoppingCartIcon } from "@heroicons/react/20/solid"
@@ -10,7 +10,6 @@ import PaymentModal from "./components/PaymentModal"
 export default function Home() {
   const cardList = getProductCardList(productList)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
-  const [preCartList, setPreCartList] = useState<CartProduct[]>([])
   const [finalCheckoutList, setFinalCheckoutList] = useState<CheckoutProduct[]>([])
   const uniqueCheckoutSku = finalCheckoutList.reduce((acc: SkuId[], cur) => {
     return acc.includes(cur.sku) ? acc : acc.concat([cur.sku])
@@ -21,13 +20,14 @@ export default function Home() {
       id: String(Date.now()),
       finalPrice: undefined
     }
-    const newCartList = [...preCartList, payload]
-    setPreCartList(newCartList)
+    const newCartList = [...finalCheckoutList, payload]
+    const newCheckoutList = getCheckoutList(newCartList)
+    setFinalCheckoutList(newCheckoutList)
   }
   function removeProductFromCart (sku: SkuId): void {
-    const newCartList: CartProduct[] = []
+    const newCartList: CheckoutProduct[] = []
     let removeCounter = 0
-    preCartList.forEach(product => {
+    finalCheckoutList.forEach(product => {
       if (product.sku === sku && removeCounter === 0) {
         removeCounter++
         return
@@ -35,24 +35,26 @@ export default function Home() {
         newCartList.push(product)
       }
     })
-    setPreCartList(newCartList)
+    const newCheckoutList = getCheckoutList(newCartList)
+    setFinalCheckoutList(newCheckoutList)
   }
   function clearProductFromCart (sku: SkuId): void {
-    const newCartList = preCartList.filter(product => product.sku !== sku)
-    setPreCartList(newCartList)
+    const newCartList = finalCheckoutList.filter(product => product.sku !== sku)
+    const newCheckoutList = getCheckoutList(newCartList)
+    setFinalCheckoutList(newCheckoutList)
   }
   function getCartQuantity (sku: SkuId): number {
-    return preCartList.filter(product => product.sku === sku).length
+    return finalCheckoutList.filter(product => product.sku === sku).length
   }
   function finishPayment (): void {
-    setPreCartList([])
+    setFinalCheckoutList([])
     setShowPaymentModal(false)
   }
-  useEffect(() => {
-    // Process Final Checkout with Promotions
-    const checkoutList = getCheckoutList(preCartList)
-    setFinalCheckoutList(checkoutList)
-  }, [preCartList])
+  // useEffect(() => {
+  //   // Process Final Checkout with Promotions
+  //   const checkoutList = getCheckoutList(preCartList)
+  //   setFinalCheckoutList(checkoutList)
+  // }, [preCartList])
   return (
     <main className="flex min-h-screen justify-between pl-10">
       <section className="flex flex-col items-center flex-1">

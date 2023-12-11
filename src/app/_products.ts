@@ -30,10 +30,6 @@ export const productList: Product[] = [
 export interface ProductCardT extends Product {
   cardPromotionText?: string
 }
-export interface CartProduct extends Product {
-  id: string
-  finalPrice: number | undefined
-}
 export function getProductCardList (checkoutList: Product[]): ProductCardT[] {
   return checkoutList.map(product => {
     const promotion = promotionMap[product.sku]
@@ -46,7 +42,9 @@ export function getProductCardList (checkoutList: Product[]): ProductCardT[] {
     return product
   })
 }
-export interface CheckoutProduct extends CartProduct {
+export interface CheckoutProduct extends ProductCardT {
+  id: string
+  finalPrice: number | undefined
   promotionDescription?: string
 }
 
@@ -148,9 +146,16 @@ const promotionMap: PromotionMap = {
   },
 }
 
-export function getCheckoutList (cardList: CartProduct[]): CheckoutProduct[] {
+export function getCheckoutList (cartList: CheckoutProduct[]): CheckoutProduct[] {
+  const clearPromotionList = cartList.map(product => {
+    return {
+      ...product,
+      finalPrice: undefined,
+      promotionDescription: undefined
+    }
+  }) 
   const promotionList = Object.values(promotionMap)
-  let checkoutList: CheckoutProduct[] = cardList
+  let checkoutList: CheckoutProduct[] = clearPromotionList
   promotionList.forEach(promotion => {
     checkoutList = promotion.addPromotion(checkoutList)
   })
