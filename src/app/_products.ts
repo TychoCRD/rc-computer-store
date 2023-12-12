@@ -1,5 +1,5 @@
 export type SkuId = 'ipd' | 'mbp' | 'atv' | 'vga'
-type Product = {
+export type Product = {
   sku: SkuId
   name: string
   price: number
